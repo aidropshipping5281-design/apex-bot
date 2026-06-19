@@ -1,0 +1,37 @@
+services:
+  apex:
+    build: .
+    container_name: apex-bot
+    env_file: .env
+    restart: unless-stopped
+    expose:
+      - "8080"                    # internal only; Caddy talks to this
+    volumes:
+      - ./data:/app/data          # journal + paper state persist here
+    # Stocks setup = TradingView (Tradevisor) -> webhook -> risk-managed paper trades.
+    # Other modes if you ever need them:
+    #   python run.py paper       (default, single symbol)
+    #   python run.py portfolio   (multi-symbol)
+    #   python run.py discord     (two-way control + trading)
+    command: ["python", "run.py", "webhook"]
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: apex-caddy
+    restart: unless-stopped
+    depends_on:
+      - apex
+    ports:
+      - "80:80"                   # needed for Let's Encrypt HTTP challenge
+      - "443:443"                 # TradingView posts here (HTTPS)
+    environment:
+      - APEX_DOMAIN=${APEX_DOMAIN}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data          # stores the auto-issued TLS certs
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

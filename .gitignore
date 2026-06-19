@@ -1,0 +1,22 @@
+# --- SECRETS: never commit these ---
+.env
+.env.*
+!.env.example
+
+# --- runtime state / logs (keep them off GitHub) ---
+data/
+*.log
+bot_log.txt
+install_log.txt
+apex_trades.csv
+
+# --- python junk ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# --- caddy local state if ever generated locally ---
+caddy_data/
+caddy_config/

@@ -1,0 +1,12 @@
+# Apex reverse proxy with automatic HTTPS (free Let's Encrypt certs).
+# Caddy reads APEX_DOMAIN and LETSENCRYPT_EMAIL from the environment
+# (set in .env, passed through by docker-compose).
+
+{
+	email {$LETSENCRYPT_EMAIL}
+}
+
+{$APEX_DOMAIN} {
+	# Forward TradingView's HTTPS webhook to the bot's internal port.
+	reverse_proxy apex:8080
+}
