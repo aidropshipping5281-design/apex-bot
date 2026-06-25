@@ -10,6 +10,7 @@ import traceback
 import paper_blend
 import scanner
 import live_tracker
+import shadow_tuner
 from notify import notify
 
 CYCLE_SECONDS = 3600   # re-evaluate every hour (daily signals; hourly catch is plenty)
@@ -36,6 +37,7 @@ def main():
         safe("scanner", scanner.one_scan, st)
         safe("tracker", live_tracker.update)              # refresh live stats + auto-pause set
         safe("weekly-summary", live_tracker.maybe_weekly_summary)
+        safe("shadow-tuner", shadow_tuner.maybe_run)      # weekly OOS param proposals (reports only)
         print(f"[always_on] cycle complete; sleeping {CYCLE_SECONDS}s")
         time.sleep(CYCLE_SECONDS)
 

@@ -26,6 +26,8 @@ caddy_config/
 *_state.json
 closed_trades.csv
 paused_sleeves.json
+shadow_proposals.json
+shadow_state.json
 *_journal.csv
 strategy_lab.txt
 tsmom_pro.txt
