@@ -20,3 +20,25 @@ venv/
 # --- caddy local state if ever generated locally ---
 caddy_data/
 caddy_config/
+
+# --- research/run outputs & paper state (runtime, not code) ---
+*_results.txt
+*_state.json
+*_journal.csv
+strategy_lab.txt
+tsmom_pro.txt
+tsmom_walkforward.txt
+stock_research.txt
+lowturn_results.txt
+research_v2.txt
+session_results.txt
+conviction.txt
+conviction_backtest.txt
+multimarket_lab.txt
+win_rate.txt
+tjr_backtest.txt
+scanner_board.txt
+scanner_run.txt
+backtest_log.txt
+session_backtest_log.txt
+drift_log.csv

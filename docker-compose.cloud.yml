@@ -1,0 +1,25 @@
+# ============================================================
+# APEX — AUTONOMOUS CLOUD DEPLOY (runs while you sleep, no PC, no Claude)
+# Runs always_on.py: the BLEND (trend + mean-reversion) + the 52-market
+# SCANNER on an hourly loop. PAPER trading. Pulls its own data from Yahoo,
+# so there is NO inbound webhook, NO Caddy, NO HTTPS, NO exchange keys.
+#
+# Deploy on the VM:   docker compose -f docker-compose.cloud.yml up -d --build
+# Watch it:           docker compose -f docker-compose.cloud.yml logs -f
+# Update after push:  git pull && docker compose -f docker-compose.cloud.yml up -d --build
+# ============================================================
+services:
+  apex:
+    build: .
+    container_name: apex-bot
+    env_file: .env
+    restart: unless-stopped          # auto-restarts on crash AND on VM reboot
+    command: ["python", "-u", "always_on.py"]
+    # No ports published — the bot reaches OUT to Yahoo + Discord; nothing reaches in.
+    volumes:
+      - ./data:/app/data             # reserved for future state persistence
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"              # keep logs from filling the tiny VM disk
+        max-file: "3"
