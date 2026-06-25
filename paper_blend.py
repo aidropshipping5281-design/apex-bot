@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 import numpy as np
 from strategy_lab import fetch_daily, indicators, START_EQ, RISK_PCT, FEE
 from notify import notify
+import live_tracker
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 STATE = os.path.join(HERE, "paper_blend_state.json")
@@ -98,11 +99,14 @@ def main():
             if why:
                 p = st["positions"][key]
                 st["cash"] += p["size"] * price * (1 - FEE)
+                live_tracker.record_close("blend", key, p["entry"], price, p["size"], p["stop"], why)
                 log.append([now, "EXIT", key, strat, round(price, 4), round(p["size"], 6),
                             round(st["cash"], 2), "", why])
                 del st["positions"][key]
-        # open new
+        # open new (skip sleeves the tracker has auto-paused for negative live edge)
         elif entry_ok(strat, r):
+            if live_tracker.is_paused(key):
+                continue
             if len(st["positions"]) >= MAX_POSITIONS:
                 continue
             if len(st["positions"]) * RISK_PCT + RISK_PCT > MAX_TOTAL_RISK:

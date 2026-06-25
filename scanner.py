@@ -29,6 +29,7 @@ import numpy as np
 from strategy_lab import fetch_daily, indicators, START_EQ, RISK_PCT, FEE, SLIP
 from conviction import analyze
 from notify import notify
+import live_tracker
 
 CRYPTO_TICKERS = {"BTC-USD", "ETH-USD", "SOL-USD", "AVAX-USD", "LINK-USD", "DOGE-USD"}
 
@@ -133,6 +134,8 @@ def one_scan(st):
         exit_now = (px < p["stop"]) or (tk not in live_tickers)
         if exit_now:
             st["cash"] += p["size"] * px * (1 - FEE)
+            live_tracker.record_close("scanner", f"scan:{tk}", p["entry"], px, p["size"],
+                                      p["stop"], "stop" if px < p["stop"] else "signal gone")
             log.append([datetime.now(timezone.utc).isoformat(timespec="seconds"),
                         "EXIT", tk, p["type"], round(px, 4), round(p["size"], 6),
                         round(st["cash"], 2), "", len(st["positions"]) - 1,
@@ -148,6 +151,8 @@ def one_scan(st):
             break
         tk = o["ticker"]
         if tk in st["positions"]:
+            continue
+        if live_tracker.is_paused(f"scan:{tk}"):   # tracker auto-paused this name
             continue
         price, atr = o["price"], o["atr"]
         stop_dist = atr * STOP_MULT

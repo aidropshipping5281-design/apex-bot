@@ -24,6 +24,8 @@ caddy_config/
 # --- research/run outputs & paper state (runtime, not code) ---
 *_results.txt
 *_state.json
+closed_trades.csv
+paused_sleeves.json
 *_journal.csv
 strategy_lab.txt
 tsmom_pro.txt

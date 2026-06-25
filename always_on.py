@@ -9,6 +9,7 @@ import time
 import traceback
 import paper_blend
 import scanner
+import live_tracker
 from notify import notify
 
 CYCLE_SECONDS = 3600   # re-evaluate every hour (daily signals; hourly catch is plenty)
@@ -33,6 +34,8 @@ def main():
         safe("blend", paper_blend.main)
         st = scanner.load_state()
         safe("scanner", scanner.one_scan, st)
+        safe("tracker", live_tracker.update)              # refresh live stats + auto-pause set
+        safe("weekly-summary", live_tracker.maybe_weekly_summary)
         print(f"[always_on] cycle complete; sleeping {CYCLE_SECONDS}s")
         time.sleep(CYCLE_SECONDS)
 
