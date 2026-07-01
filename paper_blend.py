@@ -32,6 +32,14 @@ PLAN = [
     ("AMD", "trend"), ("AMD", "meanrev"),
     ("NVDA", "trend"), ("NVDA", "meanrev"),
     ("SPY", "meanrev"),
+    # futures (added 2026-07-01): NQ trend = validated (mirrors QQQ, passed WF);
+    # ES meanrev = marginal (+0.09-0.20R OOS) — watch, don't trust with size yet
+    ("NQ=F", "trend"), ("ES=F", "meanrev"),
+    # FX majors (added 2026-07-01): RESEARCH SLEEVES ONLY — this engine FAILED OOS
+    # on all 4 (both strategies). Expect negative expectancy; live_tracker will
+    # auto-pause them once >=20 closed trades confirm it. Paper forward data only.
+    ("EURUSD=X", "trend"), ("GBPUSD=X", "trend"),
+    ("USDJPY=X", "trend"), ("AUDUSD=X", "trend"),
 ]
 
 

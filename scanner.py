@@ -58,6 +58,11 @@ UNIVERSE = [
     "SPY", "QQQ", "IWM", "DIA", "GLD", "SLV", "USO", "TLT", "XLE", "XLF", "SOXL",
     # crypto
     "BTC-USD", "ETH-USD", "SOL-USD", "AVAX-USD", "LINK-USD", "DOGE-USD",
+    # index futures (added 2026-07-01; NQ validated, ES marginal)
+    "NQ=F", "ES=F",
+    # FX majors (added 2026-07-01; UNVALIDATED — daily engine failed OOS on FX,
+    # included for forward paper data only)
+    "EURUSD=X", "GBPUSD=X", "USDJPY=X", "AUDUSD=X",
 ]
 
 
