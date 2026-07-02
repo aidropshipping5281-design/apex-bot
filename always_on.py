@@ -7,14 +7,14 @@ Run via "25) ALWAYS ON (no Claude needed).bat", or register it to auto-start
 """
 import time
 import traceback
-import paper_blend
-import scanner
 import live_tracker
-import shadow_tuner
 import day_trader
 from notify import notify
 
-CYCLE_SECONDS = 3600     # slow lane: blend/scanner/tracker (daily signals)
+# 2026-07-01: kp's mandate — PURE DAY TRADER. Swing engines (paper_blend,
+# scanner, shadow_tuner) removed from the loop. Code + state files remain in
+# the repo, dormant, in case they're ever re-enabled.
+CYCLE_SECONDS = 3600     # slow lane: tracker stats + weekly summary
 DAY_SECONDS = 300        # fast lane during US RTH: day_trader (5m bars)
 
 
@@ -38,20 +38,16 @@ def safe(label, fn, *args):
 
 
 def main():
-    print("APEX always-on daemon starting. Ctrl+C to stop.")
-    notify("Always-on daemon started — blend + scanner + DAY TRADER looping, no Claude needed.", prefix="APEX")
+    print("APEX day-trader daemon starting. Ctrl+C to stop.")
+    notify("DAY TRADER daemon started — FVG + IM on index futures, "
+           "3% risk, EOD-flat. Pure day trading, no Claude needed.", prefix="APEX")
     last_slow = 0.0
     while True:
         if time.time() - last_slow >= CYCLE_SECONDS:
-            safe("blend", paper_blend.main)
-            st = scanner.load_state()
-            safe("scanner", scanner.one_scan, st)
-            safe("tracker", live_tracker.update)          # refresh live stats + auto-pause set
+            safe("tracker", live_tracker.update)          # live stats + auto-pause
             safe("weekly-summary", live_tracker.maybe_weekly_summary)
-            safe("shadow-tuner", shadow_tuner.maybe_run)  # weekly OOS param proposals (reports only)
             last_slow = time.time()
-            print("[always_on] slow-lane cycle complete")
-        safe("day-trader", day_trader.run)                # fast lane: validated day sleeves
+        safe("day-trader", day_trader.run)                # the whole show
         sleep_s = DAY_SECONDS if rth_now() else 900   # never oversleep the open
         print(f"[always_on] sleeping {sleep_s}s")
         time.sleep(sleep_s)
