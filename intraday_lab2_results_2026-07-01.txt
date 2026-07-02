@@ -1,0 +1,26 @@
+APEX INTRADAY LAB v2 — ICT/SMC concepts on futures — run 2026-07-01 (VM)
+5m RTH, EOD-flat, costs on, 70/30 OOS by day. TJR lessons baked in
+(ATR-padded stops, alignment variant, session windows).
+
+== NQ=F  days=50 (train 35 / test 15)
+  I1 SWEEP  {pad:0.5}  TRAIN n=16 win=31% PF=0.69 -0.212R | TEST n=9 PF=1.10 +0.057R -> reject
+  I2 FVG    {disp:1.2} TRAIN n=27 win=52% PF=1.45 +0.287R | TEST n=13 win=77% PF=4.74 +1.073R -> LEAD
+  I3 SWEEPA (alignment) — too few trades, reject
+
+== ES=F  days=50 (train 35 / test 15)
+  I1 SWEEP  {pad:0.25} TRAIN n=20 win=25% PF=0.49 -0.462R | TEST n=9 PF=1.01 +0.004R -> reject
+  I2 FVG    {disp:1.8} TRAIN n=26 win=62% PF=1.88 +0.434R | TEST n=7 win=57% PF=3.08 +0.689R -> positive but n<8 (thin)
+  I3 SWEEPA — too few trades, reject
+
+VERDICT: I2 FVG (displacement fair-value-gap retrace) is POSITIVE IN ALL FOUR
+CELLS (train + test, both symbols) — the first ICT concept to survive our
+mechanical screen. Best on NQ. Liquidity-sweep fades (I1) confirm the TJR
+finding: they don't mechanize. Alignment filter untestable here (too few trades).
+
+Mechanics: a 5m displacement bar (range > disp*day-ATR) leaving a fair value
+gap between bar1 and bar3, 10:00-14:30 ET; enter on first retrace into the gap
+in the displacement direction; stop 0.25*ATR beyond the far gap edge; 2R target;
+flat by 15:55.
+
+CAVEATS: NQ test n=13 (+1.07R avg is small-sample hot), ES test n=7, different
+disp param picked per symbol (mild overfit flag), 60d data. LEAD, not proof.

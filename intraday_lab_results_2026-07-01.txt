@@ -1,0 +1,33 @@
+APEX INTRADAY LAB v1 — run 2026-07-01 on VM (apex-bot container)
+5m RTH, EOD-flat, costs on (futures 0.01%/side, QQQ 0.02%/side), 70/30 OOS by day
+
+== NQ=F  days=50 (train 35 / test 15)
+  S1 ORB   {or_min:30}   TRAIN n=34 win=41% PF=0.86 exp=-0.069R | TEST n=14 win=36% PF=0.55 exp=-0.283R -> reject
+  S2 IM    {thr:0.0}     TRAIN n=34 win=62% PF=1.99 exp=+0.114R | TEST n=15 win=73% PF=2.85 exp=+0.180R -> LEAD
+  S3 VWAPR {band:1.5}    TRAIN n=22 win=32% PF=0.58 exp=-0.336R | TEST n=9  win=22% PF=0.36 exp=-0.540R -> reject
+  S4 GAPF  {max_gap:.005} TRAIN n=14 win=71% PF=1.95 exp=+0.305R | TEST n=4 win=50% PF=0.81 exp=-0.101R -> reject (thin)
+  S5 TDC   {thr:.0025}   TRAIN n=16 win=62% PF=2.51 exp=+0.324R | TEST n=9  win=33% PF=0.95 exp=-0.017R -> reject
+
+== ES=F  days=50 (train 35 / test 15)
+  S1 ORB   {or_min:30}   TRAIN PF=0.97 -0.016R | TEST n=13 PF=0.41 -0.346R -> reject
+  S2 IM    {thr:0.0}     TRAIN n=34 win=53% PF=1.43 +0.062R | TEST n=15 win=67% PF=2.33 +0.145R -> LEAD
+  S3 VWAPR {band:1.5}    TRAIN PF=0.46 -0.486R | TEST n=12 PF=0.29 -0.562R -> reject
+  S4 GAPF  {max_gap:.005} TRAIN PF=0.87 -0.065R | TEST n=6 PF=0.79 -0.118R -> reject
+  S5 TDC   {thr:.0025}   TRAIN n=13 PF=4.33 +0.518R | TEST n=7 PF=0.18 -0.287R -> reject (overfit)
+
+== QQQ  days=60 (train 42 / test 18)  [control]
+  S1 ORB   {or_min:30}   TEST n=17 PF=0.94 -0.037R -> reject
+  S2 IM    {thr:0.001}   TRAIN n=36 win=56% PF=1.28 +0.046R | TEST n=18 win=72% PF=3.33 +0.209R -> LEAD
+  S3 VWAPR {band:2.0}    TEST n=7 PF=0.76 -0.189R -> reject
+  S4 GAPF  {max_gap:.005} TEST n=4 PF=0.65 -0.205R -> reject
+  S5 TDC   {thr:.0025}   TRAIN n=22 PF=1.58 +0.163R | TEST n=11 PF=2.44 +0.400R -> LEAD (QQQ only; failed NQ/ES)
+
+VERDICT: S2 MARKET INTRADAY MOMENTUM is the winner — LEAD on ALL 3 symbols,
+positive train AND test everywhere, best on NQ (test PF 2.85, +0.18R, 73% win).
+Matches the strongest academic evidence (Gao/Han/Li/Zhou JFE 2018; Baltussen
+2021 on 60+ futures, 1974-2020). Mechanics: direction from prev close->10:00 ET
+sets the trade; enter 15:30 ET in that direction; flat 15:55. ~25 min exposure/day.
+
+CAVEATS (hold the line): n=15-18 test trades/symbol, 60 days of 5m data (free-feed
+ceiling), single split. LEAD, not proof. Next: forward paper + longer-history
+validation before any size or live.

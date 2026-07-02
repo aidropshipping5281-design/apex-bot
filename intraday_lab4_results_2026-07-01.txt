@@ -1,0 +1,24 @@
+APEX LAB v4 — PO3 / POWER OF THREE (AMD) VERDICT — run 2026-07-01 (VM)
+Accumulation = opening range (30/60m); manipulation = Judas swing beyond it that
+closes back inside (before 12:00 ET); distribution = fade entry, pad 0.25*ATR
+stop, 2R target, EOD flat. Bias variant = only trade with prior day's direction.
+Pooled 6 symbols, fixed params, 70/30 OOS.
+
+== PO3 acc=30 raw   TRAIN n=193 PF 0.54 -0.415R | TEST n=73 PF 1.07 +0.049R | ALL n=266 PF 0.66 -0.288R -> FAIL
+== PO3 acc=30 bias  TRAIN n= 92 PF 0.45 -0.530R | TEST n=31 PF 2.41 +0.625R | ALL n=123 PF 0.71 -0.239R -> FAIL
+   (test window flatters it, but train is the worst of all variants — mirage)
+== PO3 acc=60 raw   TRAIN n=138 PF 0.64 -0.304R | TEST n=59 PF 0.92 -0.061R | ALL n=197 PF 0.72 -0.231R -> FAIL
+== PO3 acc=60 bias  TRAIN n= 67 PF 0.69 -0.256R | TEST n=21 PF 0.62 -0.317R | ALL n= 88 PF 0.67 -0.271R -> FAIL
+
+VERDICT: PO3 mechanical codification LOSES on every variant, every sample size
+(-0.23 to -0.29R/trade all-in, PF 0.66-0.72). Train windows deeply negative;
+occasional shiny test cells are small-sample noise.
+
+THE PATTERN ACROSS ALL ICT TESTS (now 3 datapoints):
+  - TJR sweep->BOS reversal:      FAILS (22-27% win, PF ~0.3)
+  - Prior-day liquidity sweep fade: FAILS (train negative both symbols)
+  - PO3 opening-range Judas fade:  FAILS (all 4 variants)
+  - FVG displacement CONTINUATION:  PASSES (n=223, PF 1.20, +0.13R)
+Conclusion: in this market/timeframe, FADING "manipulation" doesn't mechanize —
+the false-move premise fails as a rule. Trading WITH strong displacement does.
+The ICT edge that survives = continuation after institutional-scale moves.

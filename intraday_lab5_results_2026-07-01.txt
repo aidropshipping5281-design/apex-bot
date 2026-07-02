@@ -1,0 +1,21 @@
+APEX LAB v5 — FIB OTE + PO3 COMBO VERDICT — run 2026-07-01 (VM)
+OTE = enter at 62% fib retrace of a displacement leg (ICT optimal trade entry),
+stop beyond leg origin, 2R target, EOD flat. PO3F = same, gated by opening-range
+Judas sweep w/ leg opposite the sweep (distribution phase). Pooled 6 symbols.
+
+== F1 OTE  disp=1.5  TRAIN n=177 PF 0.82 -0.139R | TEST n=71 PF 1.36 +0.226R | ALL n=248 PF 0.95 -0.035R -> FAIL
+== F1 OTE  disp=1.8  TRAIN n=158 PF 0.67 -0.272R | TEST n=54 PF 0.88 -0.092R | ALL n=212 PF 0.72 -0.227R -> FAIL
+== F2 PO3F disp=1.5  TRAIN n=129 PF 0.81 -0.147R | TEST n=44 PF 1.32 +0.205R | ALL n=173 PF 0.92 -0.058R -> FAIL
+== F2 PO3F disp=1.8  TRAIN n= 88 PF 0.86 -0.105R | TEST n=32 PF 0.64 -0.294R | ALL n=120 PF 0.80 -0.155R -> FAIL
+
+KEY INSIGHT (vs the FVG that PASSED on the same legs): entering the shallow FVG
+retrace works (+0.13R/223); waiting for the DEEP 62% fib discount fails.
+Adverse selection — legs that retrace 62%+ are disproportionately the failing
+moves. The displacement edge DECAYS WITH RETRACE DEPTH. Deep-discount entries
+are a worse deal, not a better one.
+
+DAY-TRADE SCOREBOARD after ~1,900 backtested trades across 13 codifications:
+  PASS: FVG@1.8 continuation (+0.13R/223, OOS +0.41R all 6 symbols)
+  PASS: Intraday Momentum (+0.04R/314, OOS +0.10R)
+  FAIL: ORB, VWAP reversion, gap fade, trend-day continuation (as coded),
+        sweep fades x2, PO3 x4, fib OTE x2, PO3+fib x2

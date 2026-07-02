@@ -1,0 +1,25 @@
+APEX LAB v3 — POOLED 100+ TRADE VERDICT — run 2026-07-01 (VM)
+Fixed params, 6 symbols (NQ ES YM RTY QQQ SPY), 5m RTH, EOD-flat, costs on, 70/30 OOS.
+
+== FVG disp=1.2   TRAIN n=190 PF 0.87 -0.099R | TEST n=80 PF 1.19 +0.134R | ALL n=270 PF 0.96 -0.030R  -> FAIL (train negative, SPY -0.82R)
+== FVG disp=1.5   TRAIN n=178 PF 0.91 -0.066R | TEST n=76 PF 1.58 +0.344R | ALL n=254 PF 1.08 +0.057R  -> MARGINAL (train negative)
+== FVG disp=1.8   TRAIN n=167 PF 1.06 +0.038R | TEST n=56 PF 1.78 +0.410R | ALL n=223 PF 1.20 +0.132R  -> PASS
+   TEST positive on ALL 6 symbols: NQ +0.36R, ES +0.69R, YM +0.80R, RTY +0.43R, QQQ +0.05R, SPY +0.30R
+== IM  thr=0      TRAIN n=218 PF 1.11 +0.019R | TEST n=96 PF 1.87 +0.102R | ALL n=314 PF 1.29 +0.044R  -> PASS (thinner)
+   TEST positive 5/6 (YM negative); best NQ/ES/QQQ/SPY
+
+VERDICT AT 100+ TRADES:
+1. FVG requires STRONG displacement (disp>=1.8 x day-ATR). Weak-displacement FVGs
+   (1.2/1.5) are NOISE — train pooled negative. The edge is monotone in displacement
+   strength, which is economically sensible (real institutional flow) and reduces
+   overfit concern. Deploy param: disp=1.8.
+2. FVG@1.8: 223 trades all-in, +0.132R/trade, PF 1.20, 50% win; OOS +0.41R/trade
+   and positive on every one of 6 symbols. DEPLOYABLE PAPER LEAD.
+3. IM: 314 trades, +0.044R all-in / +0.102R OOS, PF 1.29. Real but modest;
+   25min/day exposure. Deploy on NQ/ES (its best futures).
+4. Reality check vs v2: NQ's +1.07R was small-sample hot as flagged; pooled truth
+   is ~+0.13R/trade. Real edge, modest size. Expectations set accordingly.
+
+CAVEATS: 60d of 5m data (free ceiling), one 70/30 split, train edge for FVG@1.8
+is thin (+0.038R) — most of the result is in the recent test window (regime
+sensitivity possible). Forward paper will referee.

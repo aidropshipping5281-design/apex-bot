@@ -11,9 +11,18 @@ import paper_blend
 import scanner
 import live_tracker
 import shadow_tuner
+import day_trader
 from notify import notify
 
-CYCLE_SECONDS = 3600   # re-evaluate every hour (daily signals; hourly catch is plenty)
+CYCLE_SECONDS = 3600     # slow lane: blend/scanner/tracker (daily signals)
+DAY_SECONDS = 300        # fast lane during US RTH: day_trader (5m bars)
+
+
+def rth_now():
+    import pandas as pd
+    from datetime import time as T
+    t = pd.Timestamp.now(tz="America/New_York")
+    return t.weekday() < 5 and T(9, 30) <= t.time() <= T(16, 10)
 
 
 def safe(label, fn, *args):
@@ -30,16 +39,22 @@ def safe(label, fn, *args):
 
 def main():
     print("APEX always-on daemon starting. Ctrl+C to stop.")
-    notify("Always-on daemon started — blend + scanner looping, no Claude needed.", prefix="APEX")
+    notify("Always-on daemon started — blend + scanner + DAY TRADER looping, no Claude needed.", prefix="APEX")
+    last_slow = 0.0
     while True:
-        safe("blend", paper_blend.main)
-        st = scanner.load_state()
-        safe("scanner", scanner.one_scan, st)
-        safe("tracker", live_tracker.update)              # refresh live stats + auto-pause set
-        safe("weekly-summary", live_tracker.maybe_weekly_summary)
-        safe("shadow-tuner", shadow_tuner.maybe_run)      # weekly OOS param proposals (reports only)
-        print(f"[always_on] cycle complete; sleeping {CYCLE_SECONDS}s")
-        time.sleep(CYCLE_SECONDS)
+        if time.time() - last_slow >= CYCLE_SECONDS:
+            safe("blend", paper_blend.main)
+            st = scanner.load_state()
+            safe("scanner", scanner.one_scan, st)
+            safe("tracker", live_tracker.update)          # refresh live stats + auto-pause set
+            safe("weekly-summary", live_tracker.maybe_weekly_summary)
+            safe("shadow-tuner", shadow_tuner.maybe_run)  # weekly OOS param proposals (reports only)
+            last_slow = time.time()
+            print("[always_on] slow-lane cycle complete")
+        safe("day-trader", day_trader.run)                # fast lane: validated day sleeves
+        sleep_s = DAY_SECONDS if rth_now() else 900   # never oversleep the open
+        print(f"[always_on] sleeping {sleep_s}s")
+        time.sleep(sleep_s)
 
 
 if __name__ == "__main__":
