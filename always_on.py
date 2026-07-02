@@ -9,6 +9,7 @@ import time
 import traceback
 import live_tracker
 import day_trader
+import dashboard
 from notify import notify
 
 # 2026-07-01: kp's mandate — PURE DAY TRADER. Swing engines (paper_blend,
@@ -39,6 +40,7 @@ def safe(label, fn, *args):
 
 def main():
     print("APEX day-trader daemon starting. Ctrl+C to stop.")
+    dashboard.start()                                     # live web dashboard on :8080
     notify("DAY TRADER daemon started — FVG + IM on index futures, "
            "3% risk, EOD-flat. Pure day trading, no Claude needed.", prefix="APEX")
     last_slow = 0.0

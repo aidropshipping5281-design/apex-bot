@@ -15,7 +15,8 @@ services:
     env_file: .env
     restart: unless-stopped          # auto-restarts on crash AND on VM reboot
     command: ["python", "-u", "always_on.py"]
-    # No ports published — the bot reaches OUT to Yahoo + Discord; nothing reaches in.
+    ports:
+      - "80:8080"                    # APEX COMMAND dashboard (read-only paper stats)
     volumes:
       - ./data:/app/data             # reserved for future state persistence
     logging:
